@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+    <!-- 将Action的创建交给spring来管理 -->
+	<constant name="struts.objectFactory" value="spring" />
+    <constant name="struts.custom.i18n.resources" value="messageResource" />
+    
+    <package name="struts" extends="struts-default">
+         <interceptors>
+            <interceptor name="myInterceptor" class="inter.AuthInterceptor"></interceptor>
+			<interceptor-stack name="myDefult">
+				<interceptor-ref name="myInterceptor"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+        </interceptors>
+       
+        <global-results>
+            <result name="error">/error.html</result>
+            <result name="login">/WEB-INF/index.jsp</result> 
+        </global-results>
+        <global-exception-mappings>
+            <exception-mapping result="error" exception="java.lang.Exception"></exception-mapping>
+        </global-exception-mappings>
+        	
+        <action name="login" class="loginAction" >
+              <exception-mapping result="error" exception="Exception.myException"></exception-mapping>
+            <result name="success" type="chain">goods</result>
+             <result name="register">/WEB-INF/WebShop/user/Register.jsp</result>
+             <result name="login">/WEB-INF/index.jsp</result>
+        </action>
+        <action name="goods" class="goodsAction" > 
+              <interceptor-ref name="myDefult"></interceptor-ref>          
+            <result name="success">/WEB-INF/WebShop/user/showgoods.jsp</result>
+             <result name="manage" type="chain">
+                 <param name="actionName">type</param>
+                  <param name="method">manage</param>
+                  </result>
+              <result name="info">/WEB-INF/WebShop/user/goodsinfo.jsp</result>
+              <result name="purchase" type="chain">
+                 <param name="actionName">user</param>
+                  <param name="method">purchase</param></result>
+            <result name="error">/error.html</result>
+        </action>
+         <action name="admin" class="adminAction" >             
+            <result name="success">/WEB-INF/WebShop/admin/adminManage.jsp</result>
+            <result name="login">/WEB-INF/WebShop/admin/AdminLogin.jsp</result>
+            <result name="error">/error.html</result>
+        </action>
+        <action name="user" class="userAction" >             
+            <result name="success">/WEB-INF/WebShop/admin/usermanage.jsp</result>
+            <result name="modify">/WEB-INF/WebShop/admin/usermodify.jsp</result>
+            <result name="login">/WEB-INF/WebShop/admin/AdminLogin.jsp</result>
+            <result name="purchase">/WEB-INF/WebShop/user/goodpurchase.jsp</result>
+            <result name="info">/WEB-INF/WebShop/user/userinfo.jsp</result>
+            <result name="error">/error.html</result>
+        </action>
+       
+        <action name="orders" class="ordersAction">
+            <result name="success">/WEB-INF/WebShop/user/goodsinfo.jsp</result>
+             <result name="orders">/WEB-INF/WebShop/user/userOrders.jsp</result>
+              <result name="lessmoney">/WEB-INF/WebShop/purchaseFailed.jsp</result>
+              <result name="save">/WEB-INF/WebShop/save.jsp</result>
+               <result name="undoFail">/WEB-INF/WebShop/user/undoOrderFail.jsp</result>
+               <result name="userSave">/WEB-INF/WebShop/user/userSave.jsp</result>
+              <result name="manage">/WEB-INF/WebShop/admin/adminOrders.jsp</result>
+        </action>
+        
+        <action name="type" class="typeAction">
+             <result name="manage">/WEB-INF/WebShop/admin/goodsmanage.jsp</result>
+        </action>
+         
+    </package>
+</struts>
